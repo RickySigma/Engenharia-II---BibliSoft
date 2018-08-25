@@ -52,7 +52,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jcobStatusC.setSelectedIndex(0);
         jcobStatusG.setSelectedIndex(0);
         jcobTipoPesquisa.setSelectedIndex(0);
-        //jtLivro.set;
+        jtLivro.clearSelection();
         jtfEdicao.setText("");
         jtfAutor.setText("");
         jtfISBN.setText("");
@@ -113,6 +113,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         });
 
         jcobStatusC.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disponível", "Emprestado", "Em Restaução", "Indisponível" }));
+        jcobStatusC.setEnabled(false);
 
         jSPainelTabela.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -177,18 +178,8 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jLabel2.setText("ISBN");
 
         jtfISBN.setEnabled(false);
-        jtfISBN.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfISBNActionPerformed(evt);
-            }
-        });
 
         jtfAutor.setEnabled(false);
-        jtfAutor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfAutorActionPerformed(evt);
-            }
-        });
 
         jtfTitulo.setEnabled(false);
 
@@ -197,11 +188,6 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jLabel3.setText("Autor");
 
         jtfNTombo.setEnabled(false);
-        jtfNTombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfNTomboActionPerformed(evt);
-            }
-        });
 
         jLabel6.setText("Nº Tombo");
 
@@ -272,15 +258,16 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                 .addGap(4, 4, 4)
                 .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpGerenciarLayout.createSequentialGroup()
+                        .addComponent(jtfISBN, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jpGerenciarLayout.createSequentialGroup()
                         .addComponent(jtfEdicao, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
-                        .addComponent(jcobStatusG, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jpGerenciarLayout.createSequentialGroup()
-                        .addComponent(jtfISBN, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jbLivros)))
+                        .addGap(12, 12, 12)))
+                .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jcobStatusG, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jbLivros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(42, 42, 42))
             .addGroup(jpGerenciarLayout.createSequentialGroup()
                 .addGap(38, 38, 38)
@@ -356,8 +343,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                         .addGap(58, 58, 58)
                         .addComponent(jcebStatus)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcobStatusC, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(42, 42, 42))
+                        .addComponent(jcobStatusC, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jSPainelTabela, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -423,28 +409,41 @@ public class GerenciarExemplares extends javax.swing.JFrame {
 
     private void jbPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPesquisarActionPerformed
 
-       // JOptionPane.showConfirmDialog(null, jcobStatusC.getSelectedItem().toString());
         if(verificarCampoPesquisa() == 0){
             pesquisa = jtfPesquisar.getText();
-            if(jcobStatusC.getSelectedIndex() == 2){//
-                if(jcebStatus.isSelected()){
-                         
-                }else{
-                    
-                }
-            }else if(jcobStatusC.getSelectedIndex() == 1){
-                if(jcebStatus.isSelected()){
-                    banco.executar("SELECT  * FROM exemplares " +" WHERE " +"(isbn ='" + pesquisa + "' AND status = '"+jcobStatusC.getSelectedItem().toString()+"')");
-                }else{
-                    banco.executar("SELECT  * FROM exemplares " +" WHERE " +"(isbn ='" + pesquisa + "')");
-                }
-            }else{
-                banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor," 
-                        + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
-                        +" (livros.isbn = SELECT isbn FROM exemplares WHERE numeroTombo ='" + ntombo +"'))");
-            }
             
-            //System.out.println(jcobTipoPesquisa.getSelectedItem().toString());
+            switch (jcobStatusC.getSelectedIndex()) {
+                case 2:
+                    //CASO SELECIONADO O TITULO
+                    if(jcebStatus.isSelected()){
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                +" exemplares.isbn = (SELECT isbn FROM livros WHERE titulo LIKE '%"+ titulo +"%')" 
+                                + " WHERE +exemplares.status = '"+jcobStatusC.getSelectedItem().toString()+"'");
+                        
+                    }else{
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                +" exemplares.isbn = (SELECT isbn FROM livros WHERE titulo LIKE '%"+ titulo +"%')"); 
+                    }   break;
+                case 1:////CASO SELECIONADO O ISBN
+                    if(jcebStatus.isSelected()){//// CASO STATUS ESTEJA MARCADO
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                +" livros.isbn = '" + isbn +"' AND exemplares.isbn = '" + isbn +"' WHERE "
+                                        +"exemplares.status = '"+jcobStatusC.getSelectedItem().toString()+"'");
+                        
+                    }else{
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                +" livros.isbn = '" + isbn +"' AND exemplares.isbn = '" + isbn +"' ");
+                    }   break;
+                default: ////CASO SELECIONADO O NUMERO DE TOMBO
+                    banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                            + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                            +" (livros.isbn = SELECT isbn FROM exemplares WHERE numeroTombo ='" + ntombo +"'))");
+                    break;
+            }
             /*jtfNTombo.setText(String.valueOf(model.getNumeroDeTombo()));
             jtfTitulo.setText(model.getTitulo());
             jtfISBN.setText(model.getAutor());
@@ -460,7 +459,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             //preencherTabela("SELECT  numeroDeTombo, titulo, autor, editora, edicao, status " + "FROM livros " +"WHERE " +"(titulo ='" + livro.getPesquisa() + "')");
             //>preencherTabela("select * from livros where numeroDeTombo = " + livro.getNumeroDeTombo());
             jtfPesquisar.setText("");
-        }else if(verificarCampoPesquisa() ==0 && jcobTipoPesquisa.getSelectedItem().toString()=="Título" ){
+        }else if(verificarCampoPesquisa() == 0 && "Título".equals(jcobTipoPesquisa.getSelectedItem().toString()) ){
             System.out.println(jcobTipoPesquisa.getSelectedItem().toString());
             jtLivro.setVisible(true);
             jbAlterar.setEnabled(true);
@@ -478,18 +477,6 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             jtfPesquisar.setText("");
         }
     }//GEN-LAST:event_jbPesquisarActionPerformed
-
-    private void jtfAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfAutorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfAutorActionPerformed
-
-    private void jtfNTomboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfNTomboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfNTomboActionPerformed
-
-    private void jtfISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfISBNActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfISBNActionPerformed
 
     private void jbInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbInserirActionPerformed
         flag = 1;
@@ -626,39 +613,30 @@ public class GerenciarExemplares extends javax.swing.JFrame {
     }//GEN-LAST:event_jbConfirmarActionPerformed
 
     private void jcebStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcebStatusActionPerformed
-        // TODO add your handling code here:
+        if(jcebStatus.isSelected()){
+            jcobStatusC.setEnabled(true);
+        }else{
+            jcobStatusC.setEnabled(false);
+        }
     }//GEN-LAST:event_jcebStatusActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+
+    @SuppressWarnings("Convert2Lambda")
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GerenciarExemplares.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GerenciarExemplares.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GerenciarExemplares.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(GerenciarExemplares.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new GerenciarExemplares().setVisible(true);
             }
