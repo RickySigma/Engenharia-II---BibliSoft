@@ -1,11 +1,11 @@
 package GUI;
 
-//import CTRL.ModeloTabela;
 import javax.swing.JOptionPane;
 import DAO.BD;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -20,9 +20,13 @@ public class GerenciarExemplares extends javax.swing.JFrame {
     private String status;
     private String pesquisa;
 
-    int flag = 0;
+    private int flag = 0;
 
-    BD banco = new BD();
+    private final BD banco = new BD();
+
+    public GerenciarExemplares(String isbn) {//CONSTRUTOR COM PESQUISAR TODOS NA CHAMADA(USADO NO GERENCIAR LIVROS);
+        pesquisar(isbn);
+    }
 
     private void limpaVariaveis() {
         titulo = "";
@@ -34,16 +38,16 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         status = "";
     }
 
-    private int verificarCampoPesquisa() {
+    private int verificarCampoPesquisa() {//VERIFICAR SE O CAMPOS DE PESQUISA NÂO ESTÀ VAZIO
         int flagi = 0;
-        if (jtfPesquisar.getText().isEmpty() && jcobTipoPesquisa.getSelectedIndex()!=3) {
+        if (jtfPesquisar.getText().isEmpty() && jcobTipoPesquisa.getSelectedIndex() != 3) {
             JOptionPane.showMessageDialog(null, "Preencha o campo de pesquisa!");
             flagi = 1;
         }
         return flagi;
     }
 
-    public int verificarCampos() {
+    public int verificarCampos() {//VERIFICA OS CAMPOS DE DADOS ANTES DE FAZER ALTERAÇÂO NO BANCO
         int flagi = 0;
         if (jtfNTombo.getText().isEmpty() || jtfISBN.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Preencha o Nº Tombo e o ISBN!");
@@ -52,11 +56,11 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         return flagi;
     }
 
-    private void limpaCampos() {
+    private void limpaCampos() {//LIMPA TODOS OS CAMPOS
         jcebStatus.setSelected(false);
         jcobStatusC.setSelectedIndex(0);
         jcobStatusG.setSelectedIndex(0);
-        jcobTipoPesquisa.setSelectedIndex(0);
+        jcobTipoPesquisa.setSelectedIndex(3);
         jtLivro.clearSelection();
         jtfEdicao.setText("");
         jtfAutor.setText("");
@@ -66,7 +70,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtfTitulo.setText("");
     }
 
-    private void ativarCampos() {
+    private void ativarCampos() {//ATIVAR TODOS OS CAMPOS
         jcobStatusG.setEnabled(true);
         jtfEdicao.setEnabled(true);
         jtfAutor.setEnabled(true);
@@ -74,9 +78,14 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtfNTombo.setEnabled(true);
         jtfTitulo.setEnabled(true);
         jbLivros.setEnabled(true);
+        
+        jbConfirmar.setEnabled(true);
+        jBCancelar.setEnabled(true);
+        jbAlterar.setEnabled(true);
+        jbExcluir.setEnabled(true);
     }
 
-    private void desativarCampos() {
+    private void desativarCampos() {//DESATIVAR TODOS OS CAMPOS
         jcobStatusG.setEnabled(false);
         jtfEdicao.setEnabled(false);
         jtfAutor.setEnabled(false);
@@ -84,6 +93,87 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtfNTombo.setEnabled(false);
         jtfTitulo.setEnabled(false);
         jbLivros.setEnabled(false);
+        
+        jbConfirmar.setEnabled(false);
+        jBCancelar.setEnabled(false);
+        jbAlterar.setEnabled(false);
+        jbExcluir.setEnabled(false);
+    }
+
+    private void pesquisar() {
+        if (verificarCampoPesquisa() == 0) {
+            pesquisa = jtfPesquisar.getText();
+            switch (jcobTipoPesquisa.getSelectedIndex()) {
+                case 3:
+                    // CASO SELECIONADO TODOS
+                    if (jcebStatus.isSelected()) {
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + " livros.isbn = exemplares.isbn  AND exemplares.status = '"
+                                + jcobStatusC.getSelectedItem().toString() + "'");
+
+                    } else {
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + " livros.isbn = exemplares.isbn");
+                    }
+                    break;
+                case 2:
+                    //CASO SELECIONADO O TITULO
+                    if (jcebStatus.isSelected()) {
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + " livros.isbn = exemplares.isbn AND livros.titulo LIKE '%" + pesquisa + "%'"
+                                + " AND exemplares.status = '" + jcobStatusC.getSelectedItem().toString() + "'");
+
+                    } else {
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + " livros.isbn = exemplares.isbn AND livros.titulo LIKE '%" + pesquisa + "%'");
+                    }
+                    break;
+                case 1:////CASO SELECIONADO O ISBN
+                    if (jcebStatus.isSelected()) {//// CASO STATUS ESTEJA MARCADO
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "' AND "
+                                + "exemplares.status = '" + jcobStatusC.getSelectedItem().toString() + "'");
+
+                    } else {
+                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "'");
+                    }
+                    break;
+                case 0: ////CASO SELECIONADO O NUMERO DE TOMBO
+                    banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                            + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                            + " livros.isbn = exemplares.isbn AND exemplares.numeroTombo ='" + pesquisa + "'");
+                    break;
+            }
+
+            jbAlterar.setEnabled(true);
+            jbExcluir.setEnabled(true);
+            jbInserir.setEnabled(!true);
+            jBCancelar.setEnabled(true);
+            pesquisa = "";
+            jtfPesquisar.setText("");
+            preencherTabela();
+
+        }
+    }
+
+    private void pesquisar(String isbn) {
+        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
+                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "'");
+        jbAlterar.setEnabled(true);
+        jbExcluir.setEnabled(true);
+        jbInserir.setEnabled(!true);
+        jBCancelar.setEnabled(true);
+        pesquisa = "";
+        jtfPesquisar.setText("");
+        preencherTabela();
     }
 
     public GerenciarExemplares() {
@@ -143,12 +233,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtLivro.setAutoCreateRowSorter(true);
         jtLivro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Nº Tombo", "Título", "Autor", "Edição", "Status"
@@ -185,6 +270,8 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                 jcobTipoPesquisaActionPerformed(evt);
             }
         });
+
+        jtfPesquisar.setEnabled(false);
 
         jbPesquisar.setText("Pesquisar");
         jbPesquisar.addActionListener(new java.awt.event.ActionListener() {
@@ -420,75 +507,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
     }//GEN-LAST:event_jtLivroMouseClicked
 
     private void jbPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbPesquisarActionPerformed
-
-        if (verificarCampoPesquisa() == 0) {
-            pesquisa = jtfPesquisar.getText();
-            JOptionPane.showMessageDialog(null, "Selecionado index = " + jcobTipoPesquisa.getSelectedIndex() + " - " + jcobTipoPesquisa.getSelectedItem().toString());
-            JOptionPane.showMessageDialog(rootPane, jcebStatus.isSelected());
-            switch (jcobTipoPesquisa.getSelectedIndex()) {
-                case 3:
-                    // CASO SELECIONADO TODOS
-                    if (jcebStatus.isSelected()) {
-                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
-                                + " livros.isbn = exemplares.isbn  AND exemplares.status = '" 
-                                + jcobStatusC.getSelectedItem().toString() + "'");
-
-                    } else {
-                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
-                                + " livros.isbn = exemplares.isbn");
-                    }
-                    break;
-                case 2:
-                    //CASO SELECIONADO O TITULO
-                    if (jcebStatus.isSelected()) {
-                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
-                                + " livros.isbn = exemplares.isbn AND livros.titulo LIKE '%" + pesquisa + "%'"
-                                + " AND exemplares.status = '" + jcobStatusC.getSelectedItem().toString() + "'");
-
-                    } else {
-                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
-                                + " livros.isbn = exemplares.isbn AND livros.titulo LIKE '%" + pesquisa + "%'");
-                    }
-                    break;
-                case 1:////CASO SELECIONADO O ISBN
-                    if (jcebStatus.isSelected()) {//// CASO STATUS ESTEJA MARCADO
-                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
-                                + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "' AND "
-                                + "exemplares.status = '" + jcobStatusC.getSelectedItem().toString() + "'");
-
-                    } else {
-                        banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
-                                + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "'");
-                    }
-                    break;
-                case 0: ////CASO SELECIONADO O NUMERO DE TOMBO
-                    banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                            + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
-                            + " livros.isbn = exemplares.isbn AND exemplares.numeroTombo ='" + pesquisa + "'");
-                    break;
-            }
-
-            jbAlterar.setEnabled(true);
-            jbExcluir.setEnabled(true);
-            jbInserir.setEnabled(!true);
-            jBCancelar.setEnabled(true);
-            pesquisa = "";
-            jtfPesquisar.setText("");
-            preencherTabela();
-            /*jtfNTombo.setText(String.valueOf(model.getNumeroDeTombo()));
-            jtfTitulo.setText(model.getTitulo());
-            jtfISBN.setText(model.getAutor());
-            jtfAutor.setText(model.getEditora());
-            jtfEdicao.setText(String.valueOf(model.getEdicao()));
-            jcobStatusG.setSelectedItem(model.getStatus());*/
-
-        }
+        pesquisar();
     }//GEN-LAST:event_jbPesquisarActionPerformed
 
     private void jbInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbInserirActionPerformed
@@ -532,31 +551,18 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jbAlterar.setEnabled(false);
         jbInserir.setEnabled(false);
         jbExcluir.setEnabled(false);
-        jbConfirmar.setEnabled(true);
 
     }//GEN-LAST:event_jbExcluirActionPerformed
 
     private void jBCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCancelarActionPerformed
 
-        jbConfirmar.setEnabled(!true);
-        jtfNTombo.setEnabled(!true);
-        jtfTitulo.setEnabled(!true);
-        jtfISBN.setEnabled(!true);
-        jtfAutor.setEnabled(!true);
-        jtfEdicao.setEnabled(!true);
-        jcobStatusG.setEnabled(!true);
-        jBCancelar.setEnabled(!true);
-        jbInserir.setEnabled(true);
-        jbAlterar.setEnabled(!true);
-        jbExcluir.setEnabled(!true);
-        limpaCampos();
-
-        /*if(jtLivro.getSelectedRow()!= -1){
-            jtLivro.setValueAt(txtNumeroDeTombo.getText(),jtLivro.getSelectedRow(), 0);
-            jtLivro.setValueAt(txtAutor.getText(),jtLivro.getSelectedRow(), 1);
-            jtLivro.setValueAt(txtEditora.getText(),jtLivro.getSelectedRow(), 2);
-
-        }*/
+        int i = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente cancelar? Todos os dados preenchidos serão limpos\n\t(Nenhuma alteração será realizada)", "Atenção!", 0, 2);
+        if (i == 0) {
+            desativarCampos();
+            limpaCampos();
+            limpaTabela(jtLivro);
+            jbInserir.setEnabled(true);
+        }            
     }//GEN-LAST:event_jBCancelarActionPerformed
 
     private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
@@ -634,16 +640,24 @@ public class GerenciarExemplares extends javax.swing.JFrame {
 
     private void jcobTipoPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcobTipoPesquisaActionPerformed
         // TODO add your handling code here:
-        if (jcobTipoPesquisa.getSelectedIndex() == 0) {
-            jcebStatus.setEnabled(false);
-            jcebStatus.setSelected(false);
-            jcobStatusC.setEnabled(false);
-        }else if(jcobTipoPesquisa.getSelectedIndex() == 3){
-            jtfPesquisar.setText("");
-        }else {
-            jcebStatus.setEnabled(true);
-            jcebStatus.setSelected(false);
-            jcobStatusC.setEnabled(false);
+        if (jcobTipoPesquisa.getSelectedIndex() != 3) {
+            jtfPesquisar.setEnabled(true);
+        }
+        switch (jcobTipoPesquisa.getSelectedIndex()) {
+            case 0:
+                jcebStatus.setEnabled(false);
+                jcebStatus.setSelected(false);
+                jcobStatusC.setEnabled(false);
+                break;
+            case 3:
+                jtfPesquisar.setEnabled(false);
+                jtfPesquisar.setText("");
+                break;
+            default:
+                jcebStatus.setEnabled(true);
+                jcebStatus.setSelected(false);
+                jcobStatusC.setEnabled(false);
+                break;
         }
     }//GEN-LAST:event_jcobTipoPesquisaActionPerformed
 
@@ -652,17 +666,15 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         //desativarCampos();
     }//GEN-LAST:event_jtLivroFocusLost
 
-    public void preencherTabela() {
-        
+    private void preencherTabela() {
+
         List<String[]> dados = new ArrayList<>();
-        //DefaultTableModel modelo = (DefaultTableModel) jtLivro.getModel();
-        String [] colunas = { "Nº Tombo","Título","Autor","Edição","Status" };
+        String[] colunas = {"Nº Tombo", "Título", "Autor", "Edição", "Status"};
         try {
             if (banco.resultado.first()) {
                 do {
                     dados.add(new String[]{banco.resultado.getString("numeroTombo"), banco.resultado.getString("titulo"),
                         banco.resultado.getString("autor"), banco.resultado.getString("edicao"), banco.resultado.getString("status")});
-                    
 
                 } while (banco.resultado.next());
             } else {
@@ -672,12 +684,12 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "SQL ERRO: " + ex);
 
         }
-        
+
         DefaultTableModel modelo = new DefaultTableModel(dados.toArray(new String[dados.size()][]), colunas);
-        
+
         jtLivro.setModel(modelo);
-        jtLivro.setDefaultEditor(Object.class, null);
-        TableColumn coluna = null;
+        jtLivro.setDefaultEditor(Object.class, null);//DESABILITA EDIÇÂO DE CELULAS NA TABELA
+        TableColumn coluna;
         for (int i = 0; i < 5; i++) {
             coluna = jtLivro.getColumnModel().getColumn(i);
             switch (i) {
@@ -704,6 +716,14 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             }
         }
         banco.fechar(0);
+    }
+
+    private void limpaTabela(JTable tabela) {
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        while (tabela.getModel().getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+        tabela.setModel(modelo);
     }
 
     @SuppressWarnings("Convert2Lambda")
