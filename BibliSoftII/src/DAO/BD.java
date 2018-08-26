@@ -21,7 +21,7 @@ public class BD {
     public Connection abrir(int op) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String url = "jdbc:mysql://localhost:3306/sgts";
+            String url = "jdbc:mysql://localhost:3306/biblisoft";
             conexao = DriverManager.getConnection(url, "root", "");
             if (op == 1) {
                 JOptionPane.showMessageDialog(null, "Conexão realizada com sucesso!");
@@ -115,14 +115,12 @@ public class BD {
     }
     
     public ResultSet executar(String sql){
-        conexao = this.abrir(0);
+        conexao = this.abrir(1);
+        System.out.println("SQL = " + sql + "\n\n");
         try {
             consulta = conexao.createStatement();
             resultado = consulta.executeQuery(sql);
             JOptionPane.showMessageDialog(null, sql);
-            if(resultado.isBeforeFirst()){
-                return null;
-            }
         } catch (SQLException e) {
             System.out.println("Erro: Não foi possivel executar a query SQL!\n"+e.getMessage());
         }
