@@ -112,7 +112,7 @@
               <StringArray count="4">
                 <StringItem index="0" value="Dispon&#xed;vel"/>
                 <StringItem index="1" value="Emprestado"/>
-                <StringItem index="2" value="Em Restau&#xe7;&#xe3;o"/>
+                <StringItem index="2" value="Em restaura&#xe7;&#xe3;o"/>
                 <StringItem index="3" value="Indispon&#xed;vel"/>
               </StringArray>
             </Property>
@@ -172,7 +172,6 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtLivroFocusLost"/>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jtLivroMouseClicked"/>
               </Events>
             </Component>
@@ -355,6 +354,9 @@
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfISBNFocusLost"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="jtfAutor">
               <Properties>
@@ -432,7 +434,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="jbLivros">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Buscar ISBN de Livro"/>
+                <Property name="text" type="java.lang.String" value="Abrir Gerenciar Livros"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
@@ -447,7 +449,7 @@
                   <StringArray count="4">
                     <StringItem index="0" value="Dispon&#xed;vel"/>
                     <StringItem index="1" value="Emprestado"/>
-                    <StringItem index="2" value="Em Restau&#xe7;&#xe3;o"/>
+                    <StringItem index="2" value="Em restaura&#xe7;&#xe3;o"/>
                     <StringItem index="3" value="Indispon&#xed;vel"/>
                   </StringArray>
                 </Property>

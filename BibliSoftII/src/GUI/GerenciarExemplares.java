@@ -11,10 +11,6 @@ import javax.swing.table.TableColumn;
 
 public class GerenciarExemplares extends javax.swing.JFrame {
 
-    private String titulo;
-    private String editora;
-    private String autor;
-    private int edicao;
     private String isbn;
     private String ntombo;
     private String status;
@@ -28,11 +24,13 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         pesquisar(isbn);
     }
 
+    private void pegaCampos() {
+        isbn = jtfISBN.getText();
+        status = jcobStatusG.getSelectedItem().toString();
+        ntombo = jtfNTombo.getText();
+    }
+
     private void limpaVariaveis() {
-        titulo = "";
-        editora = "";
-        autor = "";
-        edicao = 0;
         isbn = "";
         ntombo = "";
         status = "";
@@ -61,7 +59,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jcobStatusC.setSelectedIndex(0);
         jcobStatusG.setSelectedIndex(0);
         jcobTipoPesquisa.setSelectedIndex(3);
-        jtLivro.clearSelection();
+        //jtLivro.clearSelection();
         jtfEdicao.setText("");
         jtfAutor.setText("");
         jtfISBN.setText("");
@@ -77,12 +75,12 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtfISBN.setEnabled(true);
         jtfNTombo.setEnabled(true);
         jtfTitulo.setEnabled(true);
-        jbLivros.setEnabled(true);
-        
-        jbConfirmar.setEnabled(true);
-        jBCancelar.setEnabled(true);
+
+        // jbConfirmar.setEnabled(true);
+        //jBCancelar.setEnabled(true);
         jbAlterar.setEnabled(true);
         jbExcluir.setEnabled(true);
+        jbLivros.setEnabled(true);
     }
 
     private void desativarCampos() {//DESATIVAR TODOS OS CAMPOS
@@ -92,8 +90,8 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtfISBN.setEnabled(false);
         jtfNTombo.setEnabled(false);
         jtfTitulo.setEnabled(false);
+
         jbLivros.setEnabled(false);
-        
         jbConfirmar.setEnabled(false);
         jBCancelar.setEnabled(false);
         jbAlterar.setEnabled(false);
@@ -108,13 +106,13 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                     // CASO SELECIONADO TODOS
                     if (jcebStatus.isSelected()) {
                         banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + "livros.edicao, exemplares.status, exemplares.isbn FROM exemplares INNER JOIN livros ON"
                                 + " livros.isbn = exemplares.isbn  AND exemplares.status = '"
                                 + jcobStatusC.getSelectedItem().toString() + "'");
 
                     } else {
                         banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + "livros.edicao, exemplares.status, exemplares.isbn FROM exemplares INNER JOIN livros ON"
                                 + " livros.isbn = exemplares.isbn");
                     }
                     break;
@@ -122,40 +120,39 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                     //CASO SELECIONADO O TITULO
                     if (jcebStatus.isSelected()) {
                         banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + "livros.edicao, exemplares.status, exemplares.isbn FROM exemplares INNER JOIN livros ON"
                                 + " livros.isbn = exemplares.isbn AND livros.titulo LIKE '%" + pesquisa + "%'"
                                 + " AND exemplares.status = '" + jcobStatusC.getSelectedItem().toString() + "'");
 
                     } else {
                         banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM exemplares INNER JOIN livros ON"
+                                + "livros.edicao, exemplares.status, exemplares.isbn FROM exemplares INNER JOIN livros ON"
                                 + " livros.isbn = exemplares.isbn AND livros.titulo LIKE '%" + pesquisa + "%'");
                     }
                     break;
                 case 1:////CASO SELECIONADO O ISBN
                     if (jcebStatus.isSelected()) {//// CASO STATUS ESTEJA MARCADO
                         banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                + "livros.edicao, exemplares.status, exemplares.isbn FROM livros INNER JOIN exemplares ON"
                                 + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "' AND "
                                 + "exemplares.status = '" + jcobStatusC.getSelectedItem().toString() + "'");
 
                     } else {
                         banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                                + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                                + "livros.edicao, exemplares.status, exemplares.isbn FROM livros INNER JOIN exemplares ON"
                                 + " livros.isbn = '" + pesquisa + "' AND exemplares.isbn = '" + pesquisa + "'");
                     }
                     break;
                 case 0: ////CASO SELECIONADO O NUMERO DE TOMBO
                     banco.executar("SELECT  exemplares.numeroTombo, livros.titulo, livros.autor,"
-                            + "livros.edicao, exemplares.status FROM livros INNER JOIN exemplares ON"
+                            + "livros.edicao, exemplares.status, exemplares.isbn FROM livros INNER JOIN exemplares ON"
                             + " livros.isbn = exemplares.isbn AND exemplares.numeroTombo ='" + pesquisa + "'");
                     break;
             }
 
             jbAlterar.setEnabled(true);
             jbExcluir.setEnabled(true);
-            jbInserir.setEnabled(!true);
-            jBCancelar.setEnabled(true);
+            jbInserir.setEnabled(false);
             pesquisa = "";
             jtfPesquisar.setText("");
             preencherTabela();
@@ -227,7 +224,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             }
         });
 
-        jcobStatusC.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disponível", "Emprestado", "Em Restaução", "Indisponível" }));
+        jcobStatusC.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disponível", "Emprestado", "Em restauração", "Indisponível" }));
         jcobStatusC.setEnabled(false);
 
         jtLivro.setAutoCreateRowSorter(true);
@@ -245,11 +242,6 @@ public class GerenciarExemplares extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
-            }
-        });
-        jtLivro.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jtLivroFocusLost(evt);
             }
         });
         jtLivro.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -289,6 +281,11 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jLabel2.setText("ISBN");
 
         jtfISBN.setEnabled(false);
+        jtfISBN.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jtfISBNFocusLost(evt);
+            }
+        });
 
         jtfAutor.setEnabled(false);
 
@@ -341,12 +338,12 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             }
         });
 
-        jbLivros.setText("Buscar ISBN de Livro");
+        jbLivros.setText("Abrir Gerenciar Livros");
         jbLivros.setEnabled(false);
 
         jLabel8.setText("Status");
 
-        jcobStatusG.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disponível", "Emprestado", "Em Restaução", "Indisponível" }));
+        jcobStatusG.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disponível", "Emprestado", "Em restauração", "Indisponível" }));
         jcobStatusG.setEnabled(false);
 
         javax.swing.GroupLayout jpGerenciarLayout = new javax.swing.GroupLayout(jpGerenciar);
@@ -503,6 +500,8 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             jtfAutor.setText(jtLivro.getValueAt(jtLivro.getSelectedRow(), 2).toString());
             jtfEdicao.setText(jtLivro.getValueAt(jtLivro.getSelectedRow(), 3).toString());
             jcobStatusG.setSelectedItem(jtLivro.getValueAt(jtLivro.getSelectedRow(), 4).toString());
+            jtfISBN.setText(jtLivro.getValueAt(jtLivro.getSelectedRow(), 5).toString());
+            pegaCampos();
         }
     }//GEN-LAST:event_jtLivroMouseClicked
 
@@ -512,45 +511,32 @@ public class GerenciarExemplares extends javax.swing.JFrame {
 
     private void jbInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbInserirActionPerformed
         flag = 1;
+        ativarCampos();
         jbConfirmar.setEnabled(true);
-        jtfNTombo.setEnabled(true);
-        jtfTitulo.setEnabled(true);
-        jtfISBN.setEnabled(true);
-        jtfAutor.setEnabled(true);
-        jtfEdicao.setEnabled(true);
-        jcobStatusG.setEnabled(true);
         jBCancelar.setEnabled(true);
+        jbAlterar.setEnabled(false);
+        jbInserir.setEnabled(false);
+        jbExcluir.setEnabled(false);
     }//GEN-LAST:event_jbInserirActionPerformed
 
     private void jbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAlterarActionPerformed
         flag = 2;
-        jtLivro.setEnabled(false);
-        jbConfirmar.setEnabled(true);
-        jtfNTombo.setEnabled(!true);
-        jtfTitulo.setEnabled(true);
-        jtfISBN.setEnabled(true);
-        jtfAutor.setEnabled(true);
-        jtfEdicao.setEnabled(true);
-        jcobStatusG.setEnabled(true);
-        jBCancelar.setEnabled(true);
+        ativarCampos();
         jbAlterar.setEnabled(false);
         jbInserir.setEnabled(false);
         jbExcluir.setEnabled(false);
+
+        jBCancelar.setEnabled(true);
+        jbConfirmar.setEnabled(true);
     }//GEN-LAST:event_jbAlterarActionPerformed
 
     private void jbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExcluirActionPerformed
         flag = 3;
-        jbConfirmar.setEnabled(true);
-        jtfNTombo.setEnabled(false);
-        jtfTitulo.setEnabled(false);
-        jtfISBN.setEnabled(false);
-        jtfAutor.setEnabled(false);
-        jtfEdicao.setEnabled(false);
-        jcobStatusG.setEnabled(false);
-        jBCancelar.setEnabled(true);
-        jbAlterar.setEnabled(false);
+        desativarCampos();
+        jtfNTombo.setEnabled(true);
         jbInserir.setEnabled(false);
-        jbExcluir.setEnabled(false);
+        jBCancelar.setEnabled(true);
+        jbConfirmar.setEnabled(true);
 
     }//GEN-LAST:event_jbExcluirActionPerformed
 
@@ -560,71 +546,61 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         if (i == 0) {
             desativarCampos();
             limpaCampos();
+            limpaVariaveis();
             limpaTabela(jtLivro);
             jbInserir.setEnabled(true);
-        }            
+            flag = 0;
+        }
     }//GEN-LAST:event_jBCancelarActionPerformed
 
     private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
         int r = verificarCampos();
-        /*livro.setPesquisa(jtfPesquisar.getText());
-        BeansLivro model =  dao.buscaLivro(livro);*/
         if (flag == 1 && r != 1) {
-            /*
-            livro.setNumeroDeTombo((Integer.parseInt(txtNumeroDeTombo.getText())));
-            livro.setTitulo(jtfTitulo.getText());
-            livro.setAutor(jtfISBN.getText());
-            livro.setEditora(jtfAutor.getText());
-            livro.setEdicao((Integer.parseInt(jtfEdicao.getText())));
-            livro.setStatus("Ativo");
-             */
+            pegaCampos();
 
-            //INCLUIR();
-            limpaCampos();
-            //preencherTabela("select * from livros order by numeroDeTombo");
-            jtfNTombo.setEnabled(false);
-            jtfTitulo.setEnabled(false);
-            jtfISBN.setEnabled(false);
-            jtfAutor.setEnabled(false);
-            jtfEdicao.setEnabled(false);
-            jcobStatusG.setEnabled(false);
-            jbConfirmar.setEnabled(false);
+            int i = JOptionPane.showConfirmDialog(rootPane, "Exemplar:\nNºTombo = " + ntombo
+                    + "\nISBN = " + isbn + "\nStatus = " + status + "\n\nConfirma dados Exemplar?", "Confirmar Inserção", 0, 1);
+
+            if (i == 0) {
+                banco.inserir("exemplares", "numeroTombo,isbn,status", "'" + ntombo + "','" + isbn + "','" + status + "'");
+                desativarCampos();
+                limpaCampos();
+                limpaVariaveis();
+                limpaTabela(jtLivro);
+                jbInserir.setEnabled(true);
+                flag = 0;
+            }
 
         } else if (flag == 2 && r != 1) {
-            /*
-            livro.setNumeroDeTombo((Integer.parseInt(txtNumeroDeTombo.getText())));
-            livro.setTitulo(jtfTitulo.getText());
-            livro.setAutor(jtfISBN.getText());
-            livro.setEditora(jtfAutor.getText());
-            livro.setEdicao((Integer.parseInt(jtfEdicao.getText())));
-            livro.setStatus((String)jcStatus.getSelectedItem());*/
-            //EDITAR();
-            limpaCampos();
-            //preencherTabela("select * from livros order by numeroDeTombo");
-            jtfNTombo.setEnabled(false);
-            jtfTitulo.setEnabled(false);
-            jtfISBN.setEnabled(false);
-            jtfAutor.setEnabled(false);
-            jtfEdicao.setEnabled(false);
-            jcobStatusG.setEnabled(false);
-            jbConfirmar.setEnabled(false);
-            jbInserir.setEnabled(true);
+            int i = JOptionPane.showConfirmDialog(rootPane, "Exemplar:\nNºTombo = " + ntombo + " -> " + jtfNTombo.getText() + "\nISBN = "
+                    + isbn + " -> " + jtfISBN.getText() + "\nStatus = " + status + " -> " + jcobStatusG.getSelectedItem().toString()
+                    + "\n\nConfirma alteração dos dados do Exemplar?", "Confirmar Alteração", 0, 2);
+
+            if (i == 0) {
+                banco.atualizar("exemplares", "numeroTombo", ntombo, "numeroTombo='" + jtfNTombo.getText() + "',isbn='" + jtfISBN.getText()
+                        + "',status='" + jcobStatusG.getSelectedItem().toString() + "'", true);
+                desativarCampos();
+                limpaCampos();
+                limpaVariaveis();
+                limpaTabela(jtLivro);
+                jbInserir.setEnabled(true);
+                flag = 0;
+            }
         } else if (flag == 3 && r != 1) {
+            pegaCampos();
 
-            //EXCLUIR();
-            limpaCampos();
+            int i = JOptionPane.showConfirmDialog(rootPane, "Exemplar:\nNºTombo = " + ntombo
+                    + "\nISBN = " + isbn + "\nStatus = " + status + "\n\nConfirma exclusão do Exemplar?", "Confirmar Exclusão", 0, 0);
 
-            //preencherTabela("select * from livros order by numeroDeTombo");
-            jtfNTombo.setEnabled(false);
-            jtfTitulo.setEnabled(false);
-            jtfISBN.setEnabled(false);
-            jtfAutor.setEnabled(false);
-            jtfEdicao.setEnabled(false);
-            jcobStatusG.setEnabled(false);
-            jbConfirmar.setEnabled(false);
-            jbInserir.setEnabled(true);
-            jbAlterar.setEnabled(true);
-            jbExcluir.setEnabled(true);
+            if (i == 0) {
+                banco.excluir("exemplares", "numeroTombo", ntombo);
+                desativarCampos();
+                limpaCampos();
+                limpaVariaveis();
+                limpaTabela(jtLivro);
+                jbInserir.setEnabled(true);
+                flag = 0;
+            }
 
         }
 
@@ -661,20 +637,25 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jcobTipoPesquisaActionPerformed
 
-    private void jtLivroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtLivroFocusLost
+    private void jtfISBNFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfISBNFocusLost
         // TODO add your handling code here:
-        //desativarCampos();
-    }//GEN-LAST:event_jtLivroFocusLost
+        if (!jtfISBN.getText().isEmpty()) {
+            jtfTitulo.setText(banco.consultar("livros", "isbn", jtfISBN.getText(), "titulo"));
+            jtfAutor.setText(banco.consultar("livros", "isbn", jtfISBN.getText(), "autor"));
+            jtfEdicao.setText(banco.consultar("livros", "isbn", jtfISBN.getText(), "edicao"));
+        }
+    }//GEN-LAST:event_jtfISBNFocusLost
 
     private void preencherTabela() {
 
         List<String[]> dados = new ArrayList<>();
-        String[] colunas = {"Nº Tombo", "Título", "Autor", "Edição", "Status"};
+        String[] colunas = {"Nº Tombo", "Título", "Autor", "Edição", "Status", "ISBN"};
         try {
             if (banco.resultado.first()) {
                 do {
                     dados.add(new String[]{banco.resultado.getString("numeroTombo"), banco.resultado.getString("titulo"),
-                        banco.resultado.getString("autor"), banco.resultado.getString("edicao"), banco.resultado.getString("status")});
+                        banco.resultado.getString("autor"), banco.resultado.getString("edicao"), banco.resultado.getString("status"),
+                        banco.resultado.getString("isbn")});
 
                 } while (banco.resultado.next());
             } else {
@@ -690,7 +671,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jtLivro.setModel(modelo);
         jtLivro.setDefaultEditor(Object.class, null);//DESABILITA EDIÇÂO DE CELULAS NA TABELA
         TableColumn coluna;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             coluna = jtLivro.getColumnModel().getColumn(i);
             switch (i) {
                 case 0:
@@ -711,6 +692,13 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                     break;
                 case 4:
                     coluna.setPreferredWidth(30);
+                    coluna.setResizable(false);
+                    break;
+                case 5:
+                    coluna.setPreferredWidth(0);
+                    coluna.setWidth(0);
+                    coluna.setMinWidth(0);
+                    coluna.setMaxWidth(0);
                     coluna.setResizable(false);
                     break;
             }
