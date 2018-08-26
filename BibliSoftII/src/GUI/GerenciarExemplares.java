@@ -340,6 +340,11 @@ public class GerenciarExemplares extends javax.swing.JFrame {
 
         jbLivros.setText("Abrir Gerenciar Livros");
         jbLivros.setEnabled(false);
+        jbLivros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbLivrosActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Status");
 
@@ -645,6 +650,14 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             jtfEdicao.setText(banco.consultar("livros", "isbn", jtfISBN.getText(), "edicao"));
         }
     }//GEN-LAST:event_jtfISBNFocusLost
+
+    private void jbLivrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLivrosActionPerformed
+        // TODO add your handling code here:
+        GerenciarLivros g = new GerenciarLivros();
+        g.setLocationRelativeTo(null);
+        g.setVisible(true);
+
+    }//GEN-LAST:event_jbLivrosActionPerformed
 
     private void preencherTabela() {
 
