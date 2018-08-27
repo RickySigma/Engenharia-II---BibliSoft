@@ -2,13 +2,16 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosed" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosed"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -112,7 +115,7 @@
               <StringArray count="4">
                 <StringItem index="0" value="Dispon&#xed;vel"/>
                 <StringItem index="1" value="Emprestado"/>
-                <StringItem index="2" value="Em Restau&#xe7;&#xe3;o"/>
+                <StringItem index="2" value="Em restaura&#xe7;&#xe3;o"/>
                 <StringItem index="3" value="Indispon&#xed;vel"/>
               </StringArray>
             </Property>
@@ -130,7 +133,7 @@
               <Properties>
                 <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="5" rowCount="6">
+                  <Table columnCount="5" rowCount="0">
                     <Column editable="false" title="N&#xba; Tombo" type="java.lang.Object"/>
                     <Column editable="false" title="T&#xed;tulo" type="java.lang.Object"/>
                     <Column editable="false" title="Autor" type="java.lang.Object"/>
@@ -172,7 +175,6 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtLivroFocusLost"/>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jtLivroMouseClicked"/>
               </Events>
             </Component>
@@ -204,6 +206,9 @@
           </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="jtfPesquisar">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="jbPesquisar">
           <Properties>
@@ -352,6 +357,9 @@
               <Properties>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jtfISBNFocusLost"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="jtfAutor">
               <Properties>
@@ -429,9 +437,12 @@
             </Component>
             <Component class="javax.swing.JButton" name="jbLivros">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Buscar ISBN de Livro"/>
+                <Property name="text" type="java.lang.String" value="Abrir Gerenciar Livros"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbLivrosActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">
               <Properties>
@@ -444,7 +455,7 @@
                   <StringArray count="4">
                     <StringItem index="0" value="Dispon&#xed;vel"/>
                     <StringItem index="1" value="Emprestado"/>
-                    <StringItem index="2" value="Em Restau&#xe7;&#xe3;o"/>
+                    <StringItem index="2" value="Em restaura&#xe7;&#xe3;o"/>
                     <StringItem index="3" value="Indispon&#xed;vel"/>
                   </StringArray>
                 </Property>

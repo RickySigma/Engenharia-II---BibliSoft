@@ -210,8 +210,13 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jcobStatusG = new javax.swing.JComboBox<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jpFundo.setMaximumSize(new java.awt.Dimension(800, 400));
         jpFundo.setMinimumSize(new java.awt.Dimension(800, 400));
@@ -658,6 +663,11 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         g.setVisible(true);
 
     }//GEN-LAST:event_jbLivrosActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        this.setEnabled(false);
+        this.setVisible(false);
+    }//GEN-LAST:event_formWindowClosed
 
     private void preencherTabela() {
 
