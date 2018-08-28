@@ -312,6 +312,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         });
 
         jbAlterar.setText("Alterar");
+        jbAlterar.setToolTipText("");
         jbAlterar.setEnabled(false);
         jbAlterar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -327,6 +328,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             }
         });
 
+        jBCancelar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jBCancelar.setText("Cancelar");
         jBCancelar.setEnabled(false);
         jBCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -335,6 +337,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
             }
         });
 
+        jbConfirmar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jbConfirmar.setText("Confirmar");
         jbConfirmar.setEnabled(false);
         jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
@@ -361,7 +364,7 @@ public class GerenciarExemplares extends javax.swing.JFrame {
         jpGerenciarLayout.setHorizontalGroup(
             jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpGerenciarLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(21, 21, 21)
                 .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
@@ -396,28 +399,24 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                 .addComponent(jbExcluir)
                 .addGap(30, 30, 30)
                 .addComponent(jbAlterar)
-                .addGap(164, 164, 164)
+                .addGap(82, 445, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpGerenciarLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBCancelar)
                 .addGap(45, 45, 45)
                 .addComponent(jbConfirmar)
-                .addGap(82, 82, 82))
+                .addGap(88, 88, 88))
         );
         jpGerenciarLayout.setVerticalGroup(
             jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpGerenciarLayout.createSequentialGroup()
-                .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpGerenciarLayout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jLabel6))
-                    .addGroup(jpGerenciarLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jtfNTombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jpGerenciarLayout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jtfISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jbLivros)
-                            .addComponent(jLabel2))))
+                .addGap(21, 21, 21)
+                .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel6)
+                    .addComponent(jtfNTombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jtfISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbLivros))
                 .addGap(21, 21, 21)
                 .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel8)
@@ -426,22 +425,22 @@ public class GerenciarExemplares extends javax.swing.JFrame {
                     .addComponent(jtfTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(jcobStatusG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
+                .addGap(21, 21, 21)
                 .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpGerenciarLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addComponent(jLabel3))
                     .addComponent(jtfAutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46)
-                .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(16, 16, 16)
+                .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jBCancelar)
+                    .addComponent(jbConfirmar))
+                .addGap(7, 7, 7)
+                .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jbInserir)
                     .addComponent(jbExcluir)
-                    .addComponent(jbAlterar)
-                    .addGroup(jpGerenciarLayout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addGroup(jpGerenciarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jBCancelar)
-                            .addComponent(jbConfirmar)))))
+                    .addComponent(jbAlterar))
+                .addGap(1, 1, 1))
         );
 
         javax.swing.GroupLayout jpFundoLayout = new javax.swing.GroupLayout(jpFundo);
