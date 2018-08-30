@@ -15,8 +15,9 @@ import javax.swing.table.TableColumn;
 public class GerenciarPolitica extends javax.swing.JFrame {
 
     private BD banco = new BD();
-    private String nome;
-    private int flag;
+    private String nome, status, sql;
+    private int qtdDias, qtdItens, multaDias, flag;
+    private float multaDinherio;
 
     public GerenciarPolitica() {
         initComponents();
@@ -27,6 +28,7 @@ public class GerenciarPolitica extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jcebTodos = new javax.swing.JCheckBox();
         jtfPesquisar = new javax.swing.JTextField();
         jbPesquisar = new javax.swing.JButton();
         jSPainelTabela = new javax.swing.JScrollPane();
@@ -39,16 +41,16 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         jbInserir = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jtfMultaPorDinheiro = new javax.swing.JTextField();
-        jtfQtdItens = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jtfNomePolitica = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jtfQtdDia = new javax.swing.JTextField();
-        jtfMultaEmDias = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jbCancelar = new javax.swing.JButton();
         jbConfirmar = new javax.swing.JButton();
+        jsQtdDia = new javax.swing.JSpinner();
+        jsMultaEmDias = new javax.swing.JSpinner();
+        jsQtdItens = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -57,6 +59,13 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         jPanel1.setMinimumSize(new java.awt.Dimension(800, 400));
         jPanel1.setPreferredSize(new java.awt.Dimension(800, 400));
 
+        jcebTodos.setText("Todos");
+        jcebTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcebTodosActionPerformed(evt);
+            }
+        });
+
         jbPesquisar.setText("Pesquisar");
         jbPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -64,6 +73,7 @@ public class GerenciarPolitica extends javax.swing.JFrame {
             }
         });
 
+        jtPolitica.setAutoCreateRowSorter(true);
         jtPolitica.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -92,6 +102,11 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         jcobStatusC.setEnabled(false);
 
         jcebStatusC.setText("Status");
+        jcebStatusC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcebStatusCActionPerformed(evt);
+            }
+        });
 
         jpGer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -122,8 +137,6 @@ public class GerenciarPolitica extends javax.swing.JFrame {
 
         jtfMultaPorDinheiro.setEnabled(false);
 
-        jtfQtdItens.setEnabled(false);
-
         jLabel2.setText("Quantidade de itens:");
 
         jLabel1.setText("Nome da Politica:");
@@ -131,10 +144,6 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         jtfNomePolitica.setEnabled(false);
 
         jLabel4.setText("Quantidade de dias:");
-
-        jtfQtdDia.setEnabled(false);
-
-        jtfMultaEmDias.setEnabled(false);
 
         jLabel6.setText("Multa em dias:");
 
@@ -156,6 +165,15 @@ public class GerenciarPolitica extends javax.swing.JFrame {
             }
         });
 
+        jsQtdDia.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        jsQtdDia.setEnabled(false);
+
+        jsMultaEmDias.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        jsMultaEmDias.setEnabled(false);
+
+        jsQtdItens.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        jsQtdItens.setEnabled(false);
+
         javax.swing.GroupLayout jpGerLayout = new javax.swing.GroupLayout(jpGer);
         jpGer.setLayout(jpGerLayout);
         jpGerLayout.setHorizontalGroup(
@@ -168,19 +186,21 @@ public class GerenciarPolitica extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addGap(39, 39, 39)
                 .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jtfMultaPorDinheiro, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtfQtdItens, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtfNomePolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtfNomePolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jsQtdItens, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                        .addComponent(jtfMultaPorDinheiro, javax.swing.GroupLayout.Alignment.LEADING)))
                 .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpGerLayout.createSequentialGroup()
                         .addGap(97, 97, 97)
                         .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel4))
-                        .addGap(3, 3, 3)
-                        .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jtfMultaEmDias, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jtfQtdDia, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jsQtdDia, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                            .addComponent(jsMultaEmDias))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpGerLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbCancelar)
@@ -204,13 +224,13 @@ public class GerenciarPolitica extends javax.swing.JFrame {
                     .addComponent(jtfNomePolitica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(jtfQtdDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jsQtdDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
                 .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel2)
-                    .addComponent(jtfQtdItens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(jtfMultaEmDias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jsMultaEmDias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jsQtdItens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jpGerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpGerLayout.createSequentialGroup()
                         .addGap(21, 21, 21)
@@ -235,25 +255,23 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(60, 60, 60)
+                                .addComponent(jcebTodos)
+                                .addGap(28, 28, 28)
                                 .addComponent(jtfPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(33, 33, 33)
                                 .addComponent(jbPesquisar)
-                                .addGap(131, 131, 131)
+                                .addGap(72, 72, 72)
                                 .addComponent(jcebStatusC)
                                 .addGap(33, 33, 33)
                                 .addComponent(jcobStatusC, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jSPainelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 780, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jSPainelTabela, javax.swing.GroupLayout.PREFERRED_SIZE, 780, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jpGer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jpGer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -266,7 +284,8 @@ public class GerenciarPolitica extends javax.swing.JFrame {
                     .addComponent(jtfPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jbPesquisar)
                     .addComponent(jcebStatusC)
-                    .addComponent(jcobStatusC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jcobStatusC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcebTodos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jpGer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -292,12 +311,11 @@ public class GerenciarPolitica extends javax.swing.JFrame {
 
         System.out.println(p + " p");
 
-        if (p == 0) {
+        if ((p == 0) && (jcebTodos.isSelected() == false)) {
 
             nome = jtfPesquisar.getText();
-            banco.executar("SELECT * FROM `politicas` WHERE Nome LIKE '%" + nome + "%'");
+            banco.executar("SELECT * FROM politicas WHERE Nome LIKE '%" + nome + "%'");
             preencherTabela();
-            jtPolitica.setVisible(true);
             jbAlterar.setEnabled(true);
             jbExcluir.setEnabled(true);
             jbInserir.setEnabled(false);
@@ -305,7 +323,16 @@ public class GerenciarPolitica extends javax.swing.JFrame {
             jtPolitica.setRowSelectionAllowed(true);
             nome = "";
             jtfPesquisar.setText("");
-        } else {
+        }else if((p == 0) && (jcebTodos.isSelected() == true)){
+            banco.executar("SELECT * FROM politicas");
+            preencherTabela();
+            jbAlterar.setEnabled(true);
+            jbExcluir.setEnabled(true);
+            jbInserir.setEnabled(false);
+            jbCancelar.setEnabled(true);
+            jtPolitica.setRowSelectionAllowed(true);
+        
+        }else if ((p == 0) && (jcebTodos.isSelected() == false)) {
             JOptionPane.showMessageDialog(null, "Item não encontrado!");
             jtPolitica.setVisible(false);
             jtfPesquisar.setText("");
@@ -316,9 +343,9 @@ public class GerenciarPolitica extends javax.swing.JFrame {
     private void jtPoliticaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtPoliticaMouseClicked
         if (jtPolitica.getSelectedRow() != -1) {
             jtfNomePolitica.setText(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 0).toString());
-            jtfQtdDia.setText(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 1).toString());
-            jtfQtdItens.setText(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 2).toString());
-            jtfMultaEmDias.setText(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 3).toString());
+            jsQtdDia.setValue(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 1));
+            jsQtdItens.setValue(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 2));
+            jsMultaEmDias.setValue(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 3));
             jtfMultaPorDinheiro.setText(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 4).toString());
 
         }
@@ -328,24 +355,24 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         flag = 1;
         jbConfirmar.setEnabled(true);
         jtfNomePolitica.setEnabled(true);
-        jtfQtdDia.setEnabled(true);
-        jtfQtdItens.setEnabled(true);
+        jsQtdDia.setEnabled(true);
+        jsQtdItens.setEnabled(true);
         jtfMultaPorDinheiro.setEnabled(true);
         jtfPesquisar.setEnabled(false);
         jbPesquisar.setEnabled(false);
         jbCancelar.setEnabled(true);
-        jtfMultaEmDias.setEnabled(true);
+        jsMultaEmDias.setEnabled(true);
     }//GEN-LAST:event_jbInserirActionPerformed
 
     private void jbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAlterarActionPerformed
         flag = 2;
         jtPolitica.setEnabled(false);
         jbConfirmar.setEnabled(true);
-        jtfNomePolitica.setEnabled(!true);
-        jtfQtdDia.setEnabled(true);
-        jtfQtdItens.setEnabled(true);
+        jtfNomePolitica.setEnabled(true);
+        jsQtdDia.setEnabled(true);
+        jsQtdItens.setEnabled(true);
         jtfMultaPorDinheiro.setEnabled(true);
-        jtfMultaEmDias.setEnabled(true);
+        jsMultaEmDias.setEnabled(true);
         jbCancelar.setEnabled(true);
         jbAlterar.setEnabled(false);
         jbInserir.setEnabled(false);
@@ -356,8 +383,8 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         flag = 3;
         jbConfirmar.setEnabled(true);
         jtfNomePolitica.setEnabled(false);
-        jtfQtdDia.setEnabled(false);
-        jtfQtdItens.setEnabled(false);
+        jsQtdDia.setEnabled(false);
+        jsQtdItens.setEnabled(false);
         jtfMultaPorDinheiro.setEnabled(false);
 
         jbCancelar.setEnabled(true);
@@ -369,19 +396,19 @@ public class GerenciarPolitica extends javax.swing.JFrame {
 
     private void jbCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCancelarActionPerformed
 
-        jbConfirmar.setEnabled(!true);
-        jtfNomePolitica.setEnabled(!true);
-        jtfQtdDia.setEnabled(!true);
-        jtfQtdItens.setEnabled(!true);
-        jtfMultaPorDinheiro.setEnabled(!true);
-        jtfMultaEmDias.setEnabled(false);
+        jbConfirmar.setEnabled(false);
+        jtfNomePolitica.setEnabled(false);
+        jsQtdDia.setEnabled(false);
+        jsQtdItens.setEnabled(false);
+        jtfMultaPorDinheiro.setEnabled(false);
+        jsMultaEmDias.setEnabled(false);
         jtfPesquisar.setEnabled(true);
         jbPesquisar.setEnabled(true);
-        jbCancelar.setEnabled(!true);
+        jbCancelar.setEnabled(false);
         limparCampos();
         jbInserir.setEnabled(true);
-        jbAlterar.setEnabled(!true);
-        jbExcluir.setEnabled(!true);
+        jbAlterar.setEnabled(false);
+        jbExcluir.setEnabled(false);
     }//GEN-LAST:event_jbCancelarActionPerformed
 
     private void jbConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConfirmarActionPerformed
@@ -390,41 +417,40 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         if (flag == 1 && r != 1) {
 
             nome = jtfNomePolitica.getText();
-            politica.setQtdDeDia(Integer.parseInt(jtfQtdDia.getText().toString()));
-            politica.setQtdDeLivro(Integer.parseInt(jtfQtdItens.getText().toString()));
-            politica.setMultaEmDinheiro(Float.parseFloat(jtfMultaPorDinheiro.getText()));
-            politica.setStatus("Inativa");
-            politica.setMultaPorDia(Integer.parseInt(jtfMultaEmDias.getText()));
-            System.out.println(politica.getMultaPorDia());
+            qtdDias=(Integer.parseInt(jsQtdDia.getValue().toString()));
+            qtdItens=(Integer.parseInt(jsQtdItens.getValue().toString()));
+            multaDinherio=(Float.parseFloat(jtfMultaPorDinheiro.getText()));
+            status=("Inativa");
+            multaDias=(Integer.parseInt(jsMultaEmDias.getValue().toString()));
             banco.inserir(nome, nome, nome);
 
             limparCampos();
             // preencherTabela("SELECT Nome, Qtddias, Qtdlivros, multaEmDias, multaDinheiro, Status " + "FROM politicas " +"WHERE " +"(nome ='" + politica.getPesquisa() + "')");
             preencherTabela();
             jtfNomePolitica.setEnabled(false);
-            jtfQtdDia.setEnabled(false);
-            jtfQtdItens.setEnabled(false);
+            jsQtdDia.setEnabled(false);
+            jsQtdItens.setEnabled(false);
             jtfMultaPorDinheiro.setEnabled(false);
             jtfPesquisar.setEnabled(true);
             jbPesquisar.setEnabled(true);
             jbConfirmar.setEnabled(false);
-            jtfMultaEmDias.setEnabled(false);
+            jsMultaEmDias.setEnabled(false);
         } else if (flag == 2 && r != 1) {
-            politica.setNome(jtfNomePolitica.getText());
-            politica.setQtdDeDia(Integer.parseInt(jtfQtdDia.getText()));
-            politica.setQtdDeLivro(Integer.parseInt(jtfQtdItens.getText()));
-            politica.setMultaEmDinheiro(Float.parseFloat(jtfMultaPorDinheiro.getText()));
-            politica.setStatus(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 5).toString());
-            daoPolitica.editar(politica);
+            nome = jtfNomePolitica.getText();
+            qtdDias=(Integer.parseInt(jsQtdDia.getValue().toString()));
+            qtdItens=(Integer.parseInt(jsQtdItens.getValue().toString()));
+            multaDinherio=(Float.parseFloat(jtfMultaPorDinheiro.getText()));
+            //politica.setStatus(jtPolitica.getValueAt(jtPolitica.getSelectedRow(), 5).toString());
+            //daoPolitica.editar(politica);
             jbInserir.setEnabled(true);
             limparCampos();
             //preencherTabela("SELECT Nome, Qtddias, Qtdlivros, multaEmDias, multaDinheiro, Status " + "FROM politicas " +"WHERE " +"(nome ='" + politica.getPesquisa() + "')");
             preencherTabela();
             jtfNomePolitica.setEnabled(false);
-            jtfQtdDia.setEnabled(false);
-            jtfQtdItens.setEnabled(false);
+            jsQtdDia.setEnabled(false);
+            jsQtdItens.setEnabled(false);
             jtfMultaPorDinheiro.setEnabled(false);
-            jtfMultaEmDias.setEnabled(false);
+            jsMultaEmDias.setEnabled(false);
             jbConfirmar.setEnabled(false);
         } else if (flag == 3) {
             nome = jtfNomePolitica.getText();
@@ -435,8 +461,8 @@ public class GerenciarPolitica extends javax.swing.JFrame {
 
                 preencherTabela();
                 jtfNomePolitica.setEnabled(false);
-                jtfQtdDia.setEnabled(false);
-                jtfQtdItens.setEnabled(false);
+                jsQtdDia.setEnabled(false);
+                jsQtdItens.setEnabled(false);
                 jtfMultaPorDinheiro.setEnabled(false);
 
                 jbConfirmar.setEnabled(false);
@@ -451,6 +477,26 @@ public class GerenciarPolitica extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_jbConfirmarActionPerformed
+
+    private void jcebTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcebTodosActionPerformed
+        // TODO add your handling code here:
+        if(jcebTodos.isSelected()){
+            jtfPesquisar.setEnabled(false);
+            jtfPesquisar.setText("");
+        }else{
+            jtfPesquisar.setEnabled(true);
+        }
+    }//GEN-LAST:event_jcebTodosActionPerformed
+
+    private void jcebStatusCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcebStatusCActionPerformed
+        // TODO add your handling code here:
+           if(jcebTodos.isSelected()){
+            jcobStatusC.setEnabled(true);
+            
+        }else{
+            jtfPesquisar.setEnabled(false);
+        }
+    }//GEN-LAST:event_jcebStatusCActionPerformed
     private void limparCampos() {
         
     }
@@ -462,9 +508,9 @@ public class GerenciarPolitica extends javax.swing.JFrame {
         try {
             if (banco.resultado.first()) {
                 do {
-                    dados.add(new String[]{banco.resultado.getString("numeroTombo"), banco.resultado.getString("titulo"),
-                        banco.resultado.getString("autor"), banco.resultado.getString("edicao"), banco.resultado.getString("status"),
-                        banco.resultado.getString("isbn")});
+                    dados.add(new String[]{banco.resultado.getString("nome"), banco.resultado.getString("qtdLivro"),
+                        banco.resultado.getString("qtdDia"), banco.resultado.getString("multaDia"), banco.resultado.getString("multaDinheiro"),
+                        banco.resultado.getString("status")});
 
                 } while (banco.resultado.next());
             } else {
@@ -569,15 +615,16 @@ public class GerenciarPolitica extends javax.swing.JFrame {
     private javax.swing.JButton jbInserir;
     private javax.swing.JButton jbPesquisar;
     private javax.swing.JCheckBox jcebStatusC;
+    private javax.swing.JCheckBox jcebTodos;
     private javax.swing.JComboBox<String> jcobStatusC;
     private javax.swing.JPanel jpGer;
+    private javax.swing.JSpinner jsMultaEmDias;
+    private javax.swing.JSpinner jsQtdDia;
+    private javax.swing.JSpinner jsQtdItens;
     private javax.swing.JTable jtPolitica;
-    private javax.swing.JTextField jtfMultaEmDias;
     private javax.swing.JTextField jtfMultaPorDinheiro;
     private javax.swing.JTextField jtfNomePolitica;
     private javax.swing.JTextField jtfPesquisar;
-    private javax.swing.JTextField jtfQtdDia;
-    private javax.swing.JTextField jtfQtdItens;
     // End of variables declaration//GEN-END:variables
 
 }
